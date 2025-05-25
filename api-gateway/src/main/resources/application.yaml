@@ -1,0 +1,17 @@
+server:
+  port: 8080
+
+remote:
+  filestorage-service:
+    base-url: ${STORAGE_SERVICE_BASE_URL:http://localhost:8081}
+  analysis-service:
+    base-url: ${ANALYSIS_SERVICE_BASE_URL:http://localhost:8082}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: mappings, health
+  endpoint:
+    mappings:
+      enabled: true

@@ -1,0 +1,81 @@
+services:
+  file-storage:
+    build: ./file-storage
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://filestorage-db:5432/filestorage
+      - SPRING_DATASOURCE_USERNAME=fs_user
+      - SPRING_DATASOURCE_PASSWORD=fs_pass
+      - STORAGE_BASE_PATH=/var/uploads
+      - STORAGE_SERVER_PORT=8080
+    volumes:
+      - filestorage-data:/var/uploads
+    depends_on:
+      - filestorage-db
+    networks:
+      - app-net
+
+
+  filestorage-db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: filestorage
+      POSTGRES_USER: fs_user
+      POSTGRES_PASSWORD: fs_pass
+    volumes:
+      - file_storage_pg_data:/var/lib/postgresql/data
+    networks:
+      - app-net
+    ports:
+      - "5432:5432"
+
+  file-analysis:
+    build: ./file-analysis
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://fileanalysis-db:5432/analyses
+      - SPRING_DATASOURCE_USERNAME=an_user
+      - SPRING_DATASOURCE_PASSWORD=an_pass
+      - ANALYSIS_IMAGE_PATH=/var/analyses
+      - FILESTORAGE_SERVICE_URL=http://file-storage:8080
+      - ANALYSIS_SERVER_PORT=8080
+    volumes:
+      - fileanalysis-data:/var/analyses
+    depends_on:
+      - fileanalysis-db
+    networks:
+      - app-net
+
+
+  fileanalysis-db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: analyses
+      POSTGRES_USER: an_user
+      POSTGRES_PASSWORD: an_pass
+    volumes:
+      - file_analysis_pg_data:/var/lib/postgresql/data
+    networks:
+      - app-net
+    ports:
+      - "5433:5432"
+  
+  api-gateway:
+    build: ./api-gateway
+    environment:
+      - STORAGE_SERVICE_BASE_URL=http://file-storage:8080
+      - ANALYSIS_SERVICE_BASE_URL=http://file-analysis:8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      - file-storage
+      - file-analysis
+    networks:
+      - app-net
+
+volumes:
+  file_storage_pg_data:
+  file_analysis_pg_data:
+  filestorage-data:
+  fileanalysis-data:
+
+networks:
+  app-net:

@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/analyses}
+    username: ${SPRING_DATASOURCE_USERNAME:an_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:an_pass}
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+remote:
+  filestorage-service:
+    base-url: ${FILESTORAGE_SERVICE_URL:http://localhost:8081}
+
+analysis:
+  wordcloud-path: ${ANALYSIS_IMAGE_PATH:/tmp/analysis_imgs}
+
+server:
+  port: ${ANALYSIS_SERVER_PORT:8082}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: mappings, health
+  endpoint:
+    mappings:
+      enabled: true

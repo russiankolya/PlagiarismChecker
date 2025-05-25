@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/filestorage}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+storage:
+  base-path: ${STORAGE_BASE_PATH}
+
+server:
+  port: ${STORAGE_SERVER_PORT:8081}
